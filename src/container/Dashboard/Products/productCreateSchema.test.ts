@@ -97,6 +97,43 @@ test("productCreateSchema rejects a non-URL image", () => {
   assert.equal(parsed.success, false);
 });
 
+test("productCreateSchema ignores empty draft variants when unchecked", () => {
+  const parsed = productCreateSchema.safeParse({
+    name: "Soap",
+    kind: "product",
+    baseUnit: "piece",
+    imageUrl: "",
+    locationIds: ["11111111-1111-1111-1111-111111111111"],
+    hasVariants: false,
+    sellingPrice: 400,
+    purchaseCost: 200,
+    variants: [
+      { name: "", sellingPrice: 0, purchaseCost: 0, openingStock: [] },
+    ],
+  });
+  assert.equal(parsed.success, true);
+});
+
+test("productCreateSchema requires a variant name only when checked", () => {
+  const parsed = productCreateSchema.safeParse({
+    name: "T-Shirt",
+    kind: "product",
+    baseUnit: "piece",
+    imageUrl: "",
+    locationIds: ["11111111-1111-1111-1111-111111111111"],
+    hasVariants: true,
+    variants: [{ name: "", sellingPrice: 5000, purchaseCost: 3000 }],
+  });
+  assert.equal(parsed.success, false);
+  if (parsed.success) return;
+  assert.equal(
+    parsed.error.issues.some(
+      (issue) => issue.message === "Variant name is required",
+    ),
+    true,
+  );
+});
+
 test("productCreateSchema requires prices for a simple product", () => {
   const parsed = productCreateSchema.safeParse({
     name: "Soap",

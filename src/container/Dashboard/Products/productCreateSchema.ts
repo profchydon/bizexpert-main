@@ -2,17 +2,56 @@ import { z } from "zod";
 
 const openingStockSchema = z.object({
   locationId: z.string().uuid(),
-  quantity: z.coerce.number().positive("Quantity must be greater than 0"),
+  quantity: z.coerce.number().min(0),
 });
 
-const variantSchema = z.object({
-  name: z.string().trim().min(1, "Variant name is required"),
+const variantDraftSchema = z.object({
+  name: z.string().optional(),
   sku: z.string().optional(),
   barcode: z.string().optional(),
-  sellingPrice: z.coerce.number().positive("Selling price is required"),
-  purchaseCost: z.coerce.number().positive("Cost price is required"),
+  sellingPrice: z.coerce.number().optional(),
+  purchaseCost: z.coerce.number().optional(),
   openingStock: z.array(openingStockSchema).optional(),
 });
+
+type VariantDraft = z.infer<typeof variantDraftSchema>;
+
+function refineRequiredVariants(
+  variants: VariantDraft[] | undefined,
+  ctx: z.RefinementCtx,
+) {
+  if (!variants?.length) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Add at least one variant",
+      path: ["variants"],
+    });
+    return;
+  }
+  variants.forEach((variant, index) => {
+    if (!variant.name?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Variant name is required",
+        path: ["variants", index, "name"],
+      });
+    }
+    if (!variant.sellingPrice || variant.sellingPrice <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Selling price is required",
+        path: ["variants", index, "sellingPrice"],
+      });
+    }
+    if (!variant.purchaseCost || variant.purchaseCost <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Cost price is required",
+        path: ["variants", index, "purchaseCost"],
+      });
+    }
+  });
+}
 
 export const productCreateSchema = z
   .object({
@@ -38,17 +77,11 @@ export const productCreateSchema = z
     lowStockThreshold: z.coerce.number().min(0).optional(),
     openingQuantity: z.coerce.number().min(0).optional(),
     openingStock: z.array(openingStockSchema).optional(),
-    variants: z.array(variantSchema).optional(),
+    variants: z.array(variantDraftSchema).optional(),
   })
   .superRefine((values, ctx) => {
     if (values.hasVariants) {
-      if (!values.variants?.length) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Add at least one variant",
-          path: ["variants"],
-        });
-      }
+      refineRequiredVariants(values.variants, ctx);
       return;
     }
     if (!values.sellingPrice || values.sellingPrice <= 0) {
