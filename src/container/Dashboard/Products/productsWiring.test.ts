@@ -31,6 +31,8 @@ test("product mutations use the products API", () => {
   );
   assert.equal(form.includes("bizexpertApi.put"), true);
   assert.equal(create.includes("/products/full"), true);
+  assert.equal(create.includes("firstProductCreateError"), true);
+  assert.equal(create.includes("preferredProductLocationIds"), true);
   assert.equal(mutations.includes("bulk-deactivate"), true);
   assert.equal(table.includes("useProductsTableMutations"), true);
   assert.equal(table.includes("limit: 100"), true);

@@ -103,7 +103,11 @@ export function ProductCreateFormFields({
         label="Image URL"
         placeholder="Optional"
         value={form.watch("imageUrl") ?? ""}
-        onChange={(value) => form.setValue("imageUrl", value)}
+        onChange={(value) =>
+          form.setValue("imageUrl", value, { shouldValidate: true })
+        }
+        isInvalid={Boolean(errors.imageUrl)}
+        hint={errors.imageUrl?.message}
       />
       <div className="space-y-2">
         <p className="text-sm font-medium text-primary">Stores</p>
@@ -115,6 +119,11 @@ export function ProductCreateFormFields({
             onChange={(checked) => toggleLocation(location.id, checked)}
           />
         ))}
+        {locations.length === 0 ? (
+          <p className="text-sm text-error-600">
+            Create a store before adding products.
+          </p>
+        ) : null}
         {errors.locationIds?.message ? (
           <p className="text-sm text-error-600">{errors.locationIds.message}</p>
         ) : null}
@@ -128,14 +137,14 @@ export function ProductCreateFormFields({
         <Input
           label="Opening quantity (first selected store)"
           type="number"
-          value={String(form.watch("openingStock")?.[0]?.quantity ?? "")}
-          onChange={(value) => {
-            const locationId = selected[0];
-            if (!locationId) return;
-            form.setValue("openingStock", [
-              { locationId, quantity: Number(value) || 0 },
-            ]);
-          }}
+          value={String(form.watch("openingQuantity") || "")}
+          onChange={(value) =>
+            form.setValue("openingQuantity", Number(value) || 0, {
+              shouldValidate: true,
+            })
+          }
+          isInvalid={Boolean(errors.openingQuantity)}
+          hint={errors.openingQuantity?.message}
         />
       ) : null}
     </>

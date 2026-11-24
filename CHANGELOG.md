@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- **Fix (BizExpert):** Creating a product no longer fails silently: the default store is selected, empty opening quantity is ignored, and validation errors toast. Covered by `productCreateSchema.test.ts` and `productCreateFeedback.test.ts`.
+
 - **Fix (BizExpert):** Redis TLS is `REDIS_TLS=true|false`, not implied by `NODE_ENV=production`. Covered by `redis.util.spec.ts`.
 
 - **Change (BizExpert):** This dashboard is its own git repo (`bizexpert-main`). Compose lives in `profchydon/bizexpert`. Covered by `aws-ec2-docs.test.mjs`.

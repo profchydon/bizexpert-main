@@ -22,6 +22,10 @@ import { ProductVariantEditor } from "./ProductVariantEditor";
 import { readProductsApiError } from "./productsApiError";
 import { PRODUCT_FORM_SLIDEOUT_RESIZE } from "./productsPageClasses";
 import {
+  firstProductCreateError,
+  preferredProductLocationIds,
+} from "./productCreateFeedback";
+import {
   productCreateDefaults,
   productCreateSchema,
   toProductCreatePayload,
@@ -65,6 +69,14 @@ export function SingleProductCreateSlideout({ isOpen, onClose }: Props) {
     if (!isOpen) return;
     form.reset(productCreateDefaults);
   }, [form, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !locations?.length) return;
+    if (form.getValues("locationIds").length) return;
+    form.setValue("locationIds", preferredProductLocationIds(locations), {
+      shouldValidate: true,
+    });
+  }, [form, isOpen, locations]);
 
   const close = () => {
     form.reset(productCreateDefaults);
@@ -120,7 +132,9 @@ export function SingleProductCreateSlideout({ isOpen, onClose }: Props) {
       </SlideoutMenu.Header>
       <form
         className="flex min-h-0 flex-1 flex-col"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          toast.error(firstProductCreateError(errors));
+        })}
       >
         <SlideoutMenu.Content className="space-y-4">
           <ProductCreateFormFields

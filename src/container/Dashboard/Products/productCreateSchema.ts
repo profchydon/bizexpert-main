@@ -29,6 +29,7 @@ export const productCreateSchema = z
     sellingPrice: z.coerce.number().optional(),
     purchaseCost: z.coerce.number().optional(),
     lowStockThreshold: z.coerce.number().min(0).optional(),
+    openingQuantity: z.coerce.number().min(0).optional(),
     openingStock: z.array(openingStockSchema).optional(),
     variants: z.array(variantSchema).optional(),
   })
@@ -75,6 +76,7 @@ export const productCreateDefaults: ProductCreateValues = {
   sellingPrice: 0,
   purchaseCost: 0,
   lowStockThreshold: 0,
+  openingQuantity: 0,
   openingStock: [],
   variants: [{ name: "", sellingPrice: 0, purchaseCost: 0, openingStock: [] }],
 };
@@ -99,8 +101,17 @@ export function toProductCreatePayload(values: ProductCreateValues) {
     sellingPrice: values.hasVariants ? undefined : values.sellingPrice,
     purchaseCost: values.hasVariants ? undefined : values.purchaseCost,
     openingStock:
-      values.kind === "product" && !values.hasVariants
-        ? values.openingStock
+      values.kind === "product" &&
+      !values.hasVariants &&
+      values.openingQuantity &&
+      values.openingQuantity > 0 &&
+      values.locationIds[0]
+        ? [
+            {
+              locationId: values.locationIds[0],
+              quantity: values.openingQuantity,
+            },
+          ]
         : undefined,
     variants: values.hasVariants
       ? values.variants?.map((variant) => ({

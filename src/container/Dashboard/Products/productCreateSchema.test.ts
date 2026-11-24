@@ -34,6 +34,41 @@ test("toProductCreatePayload sends variants when hasVariants is true", () => {
   assert.equal(payload.purchaseCost, undefined);
 });
 
+test("toProductCreatePayload maps opening quantity onto the first store", () => {
+  const payload = toProductCreatePayload({
+    name: "Soap",
+    kind: "product",
+    baseUnit: "piece",
+    imageUrl: "",
+    locationIds: ["11111111-1111-1111-1111-111111111111"],
+    hasVariants: false,
+    sellingPrice: 400,
+    purchaseCost: 200,
+    openingQuantity: 12,
+  });
+  assert.deepEqual(payload.openingStock, [
+    {
+      locationId: "11111111-1111-1111-1111-111111111111",
+      quantity: 12,
+    },
+  ]);
+});
+
+test("toProductCreatePayload omits opening stock when quantity is empty", () => {
+  const payload = toProductCreatePayload({
+    name: "Soap",
+    kind: "product",
+    baseUnit: "piece",
+    imageUrl: "",
+    locationIds: ["11111111-1111-1111-1111-111111111111"],
+    hasVariants: false,
+    sellingPrice: 400,
+    purchaseCost: 200,
+    openingQuantity: 0,
+  });
+  assert.equal(payload.openingStock, undefined);
+});
+
 test("productCreateSchema requires prices for a simple product", () => {
   const parsed = productCreateSchema.safeParse({
     name: "Soap",
