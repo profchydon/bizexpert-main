@@ -155,7 +155,7 @@ export function toProductCreatePayload(values: ProductCreateValues) {
         : undefined,
     variants: values.hasVariants
       ? values.variants?.map((variant) => ({
-          name: variant.name.trim(),
+          name: variant.name?.trim() ?? "",
           sku: trim(variant.sku),
           barcode: trim(variant.barcode),
           sellingPrice: variant.sellingPrice,

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- **Fix (BizExpert):** Simple product create no longer requires a variant name. Empty draft variants are ignored unless “This product has variants” is checked. Covered by `productCreateSchema.test.ts`.
+- **Fix (BizExpert):** Simple product create no longer requires a variant name. Empty draft variants are ignored unless “This product has variants” is checked. Variant payload mapping uses a trimmed name fallback so `next build` type-checks. Covered by `productCreateSchema.test.ts`.
 
 - **Fix (BizExpert):** Product create waits for the add-product dialog to close before opening the slideout, submits from the button (not a native form submit), surfaces Nest/network errors, and times out hung API calls. Covered by `overlayHandoff.test.ts`, `productsApiError.test.ts`, `productCreateSchema.test.ts`, and `productsWiring.test.ts`.
 

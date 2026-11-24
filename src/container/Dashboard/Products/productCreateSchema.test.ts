@@ -34,6 +34,19 @@ test("toProductCreatePayload sends variants when hasVariants is true", () => {
   assert.equal(payload.purchaseCost, undefined);
 });
 
+test("toProductCreatePayload trims an optional variant name", () => {
+  const payload = toProductCreatePayload({
+    name: "T-Shirt",
+    kind: "product",
+    baseUnit: "piece",
+    imageUrl: "",
+    locationIds: ["11111111-1111-1111-1111-111111111111"],
+    hasVariants: true,
+    variants: [{ sellingPrice: 5000, purchaseCost: 3000 }],
+  });
+  assert.equal(payload.variants?.[0]?.name, "");
+});
+
 test("toProductCreatePayload maps opening quantity onto the first store", () => {
   const payload = toProductCreatePayload({
     name: "Soap",
