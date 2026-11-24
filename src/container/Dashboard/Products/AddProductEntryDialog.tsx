@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { locationsDeleteModalContentClass } from "../Locations/locationsPageClasses";
+import { scheduleOverlayHandoff } from "./overlayHandoff";
 
 type Props = {
   isOpen: boolean;
@@ -36,9 +36,10 @@ export function AddProductEntryDialog({
           <Button
             variant="outline"
             className="h-auto flex-col gap-2 px-4 py-5"
+            type="button"
             onClick={() => {
               onClose();
-              onSingle();
+              scheduleOverlayHandoff(onSingle);
             }}
           >
             <Package className="size-6 text-primary-600" />
@@ -47,9 +48,10 @@ export function AddProductEntryDialog({
           <Button
             variant="outline"
             className="h-auto flex-col gap-2 px-4 py-5"
+            type="button"
             onClick={() => {
               onClose();
-              onBulk();
+              scheduleOverlayHandoff(onBulk);
             }}
           >
             <Upload className="size-6 text-primary-600" />

@@ -59,7 +59,12 @@ export default function RootLayout({
             <div>{children}</div>
           </PHProvider>
         </Providers>
-        <Toaster position="top-right" richColors />
+        <Toaster
+          position="top-right"
+          richColors
+          style={{ zIndex: 4000 }}
+          toastOptions={{ className: "pointer-events-auto" }}
+        />
         <div id="modal-root"></div>
         <Script
           strategy="afterInteractive"

@@ -147,6 +147,34 @@ export function ProductCreateFormFields({
           hint={errors.openingQuantity?.message}
         />
       ) : null}
+      {!hasVariants ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Input
+            label="Selling price"
+            type="number"
+            value={String(form.watch("sellingPrice") || "")}
+            onChange={(value) =>
+              form.setValue("sellingPrice", Number(value), {
+                shouldValidate: true,
+              })
+            }
+            isInvalid={Boolean(errors.sellingPrice)}
+            hint={errors.sellingPrice?.message}
+          />
+          <Input
+            label="Cost price"
+            type="number"
+            value={String(form.watch("purchaseCost") || "")}
+            onChange={(value) =>
+              form.setValue("purchaseCost", Number(value), {
+                shouldValidate: true,
+              })
+            }
+            isInvalid={Boolean(errors.purchaseCost)}
+            hint={errors.purchaseCost?.message}
+          />
+        </div>
+      ) : null}
     </>
   );
 }

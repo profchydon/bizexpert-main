@@ -5,6 +5,7 @@ const API_URL =
 
 export const bizexpertApi = axios.create({
   baseURL: API_URL,
+  timeout: 20000,
   headers: { "Content-Type": "application/json" },
 });
 

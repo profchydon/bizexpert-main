@@ -69,6 +69,34 @@ test("toProductCreatePayload omits opening stock when quantity is empty", () => 
   assert.equal(payload.openingStock, undefined);
 });
 
+test("productCreateSchema accepts a blank image URL", () => {
+  const parsed = productCreateSchema.safeParse({
+    name: "Soap",
+    kind: "product",
+    baseUnit: "piece",
+    imageUrl: "",
+    locationIds: ["11111111-1111-1111-1111-111111111111"],
+    hasVariants: false,
+    sellingPrice: 400,
+    purchaseCost: 200,
+  });
+  assert.equal(parsed.success, true);
+});
+
+test("productCreateSchema rejects a non-URL image", () => {
+  const parsed = productCreateSchema.safeParse({
+    name: "Soap",
+    kind: "product",
+    baseUnit: "piece",
+    imageUrl: "not-a-url",
+    locationIds: ["11111111-1111-1111-1111-111111111111"],
+    hasVariants: false,
+    sellingPrice: 400,
+    purchaseCost: 200,
+  });
+  assert.equal(parsed.success, false);
+});
+
 test("productCreateSchema requires prices for a simple product", () => {
   const parsed = productCreateSchema.safeParse({
     name: "Soap",

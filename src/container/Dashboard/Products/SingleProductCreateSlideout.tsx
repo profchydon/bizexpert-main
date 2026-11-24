@@ -16,7 +16,6 @@ import {
   subCategorySelectOptions,
 } from "../Categories/categorySelectOptions";
 import { locationsQueryKeys } from "../Locations/locationsQueryKeys";
-import { Input } from "@/components/base/input/input";
 import { ProductCreateFormFields } from "./ProductCreateFormFields";
 import { ProductVariantEditor } from "./ProductVariantEditor";
 import { readProductsApiError } from "./productsApiError";
@@ -84,7 +83,10 @@ export function SingleProductCreateSlideout({ isOpen, onClose }: Props) {
   };
 
   const onSubmit = async (values: ProductCreateValues) => {
-    if (!businessId) return;
+    if (!businessId) {
+      toast.error("No business selected");
+      return;
+    }
     try {
       await bizexpertApi.post(
         `/businesses/${businessId}/products/full`,
@@ -98,6 +100,10 @@ export function SingleProductCreateSlideout({ isOpen, onClose }: Props) {
       toast.error(readProductsApiError(err, "Failed to create product"));
     }
   };
+
+  const submitProduct = form.handleSubmit(onSubmit, (errors) => {
+    toast.error(firstProductCreateError(errors));
+  });
 
   const mainCategory = form.watch("category") ?? "";
   const categoryOptions = mainCategorySelectOptions(
@@ -117,7 +123,7 @@ export function SingleProductCreateSlideout({ isOpen, onClose }: Props) {
     <SlideoutMenu
       isOpen={isOpen}
       onOpenChange={(open) => !open && close()}
-      isDismissable
+      isDismissable={false}
       ariaLabel="Add single product"
       resizeOptions={PRODUCT_FORM_SLIDEOUT_RESIZE}
     >
@@ -131,10 +137,11 @@ export function SingleProductCreateSlideout({ isOpen, onClose }: Props) {
         </p>
       </SlideoutMenu.Header>
       <form
-        className="flex min-h-0 flex-1 flex-col"
-        onSubmit={form.handleSubmit(onSubmit, (errors) => {
-          toast.error(firstProductCreateError(errors));
-        })}
+        className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void submitProduct();
+        }}
       >
         <SlideoutMenu.Content className="space-y-4">
           <ProductCreateFormFields
@@ -143,46 +150,32 @@ export function SingleProductCreateSlideout({ isOpen, onClose }: Props) {
             subCategoryOptions={subCategoryOptions}
             locations={locations ?? []}
           />
-          {!hasVariants ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Input
-                label="Selling price"
-                type="number"
-                value={String(form.watch("sellingPrice") || "")}
-                onChange={(value) =>
-                  form.setValue("sellingPrice", Number(value), {
-                    shouldValidate: true,
-                  })
-                }
-                isInvalid={Boolean(form.formState.errors.sellingPrice)}
-                hint={form.formState.errors.sellingPrice?.message}
-              />
-              <Input
-                label="Cost price"
-                type="number"
-                value={String(form.watch("purchaseCost") || "")}
-                onChange={(value) =>
-                  form.setValue("purchaseCost", Number(value), {
-                    shouldValidate: true,
-                  })
-                }
-                isInvalid={Boolean(form.formState.errors.purchaseCost)}
-                hint={form.formState.errors.purchaseCost?.message}
-              />
-            </div>
-          ) : (
+          {hasVariants ? (
             <ProductVariantEditor
               form={form}
               showStock={kind === "product"}
               defaultLocationId={locationIds[0]}
             />
-          )}
+          ) : null}
         </SlideoutMenu.Content>
-        <SlideoutMenu.Footer className="flex justify-end gap-3 bg-primary">
+        <SlideoutMenu.Footer className="flex flex-col gap-3 bg-primary sm:flex-row sm:items-center sm:justify-end">
+          {form.formState.isSubmitted && !form.formState.isValid ? (
+            <p className="mr-auto text-sm text-error-600">
+              {firstProductCreateError(form.formState.errors)}
+            </p>
+          ) : null}
           <Button type="button" variant="outline" onClick={close}>
             Cancel
           </Button>
-          <Button type="submit" isLoading={form.formState.isSubmitting}>
+          <Button
+            type="button"
+            isLoading={form.formState.isSubmitting}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              void submitProduct();
+            }}
+          >
             Create product
           </Button>
         </SlideoutMenu.Footer>

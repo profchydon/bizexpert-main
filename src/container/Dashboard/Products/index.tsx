@@ -34,7 +34,12 @@ export default function Products() {
         pageDescription="Catalog products and services with stores, variants, and CSV import."
         breadCrumbs={["Inventory", "Products"]}
       >
-        <Button variant="primary" size="md" onClick={() => setEntryOpen(true)}>
+        <Button
+          type="button"
+          variant="primary"
+          size="md"
+          onClick={() => setEntryOpen(true)}
+        >
           Add new product
         </Button>
       </PageHeader>

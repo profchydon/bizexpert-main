@@ -23,7 +23,14 @@ export const productCreateSchema = z
     sku: z.string().optional(),
     barcode: z.string().optional(),
     baseUnit: z.string().trim().min(1, "Unit is required"),
-    imageUrl: z.string().url().optional().or(z.literal("")),
+    imageUrl: z
+      .string()
+      .trim()
+      .optional()
+      .refine(
+        (value) => !value || /^https?:\/\/\S+$/i.test(value),
+        "Enter a valid image URL or leave blank",
+      ),
     locationIds: z.array(z.string().uuid()).min(1, "Select at least one store"),
     hasVariants: z.boolean(),
     sellingPrice: z.coerce.number().optional(),

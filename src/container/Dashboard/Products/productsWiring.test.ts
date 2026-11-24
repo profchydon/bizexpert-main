@@ -33,10 +33,24 @@ test("product mutations use the products API", () => {
   assert.equal(create.includes("/products/full"), true);
   assert.equal(create.includes("firstProductCreateError"), true);
   assert.equal(create.includes("preferredProductLocationIds"), true);
+  assert.equal(create.includes("isDismissable={false}"), true);
+  assert.equal(create.includes("void submitProduct()"), true);
   assert.equal(mutations.includes("bulk-deactivate"), true);
   assert.equal(table.includes("useProductsTableMutations"), true);
   assert.equal(table.includes("limit: 100"), true);
   assert.equal(bulk.includes("bulk-import"), true);
+});
+
+test("add-product dialog waits before opening the next overlay", () => {
+  const entry = readFileSync(
+    "src/container/Dashboard/Products/AddProductEntryDialog.tsx",
+    "utf8",
+  );
+  const api = readFileSync("src/lib/bizexpert/api.ts", "utf8");
+  const layout = readFileSync("src/app/layout.tsx", "utf8");
+  assert.equal(entry.includes("scheduleOverlayHandoff"), true);
+  assert.equal(api.includes("timeout: 20000"), true);
+  assert.equal(layout.includes("zIndex: 4000"), true);
 });
 
 test("row actions include edit units and deactivate", () => {
