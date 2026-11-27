@@ -155,24 +155,23 @@ describe("sumServiceFees", () => {
 });
 
 describe("offboard service fee wiring", () => {
-  it("does not price device rows from the service-fees catalog", () => {
+  it("prices device rows from the service-fees catalog for the selected action", () => {
     const row = readFileSync(
       "src/container/Dashboard/Employees/OffboardDevices/AssignedDeviceRow.tsx",
+      "utf8",
+    );
+    const hook = readFileSync(
+      "src/container/Dashboard/Employees/OffboardDevices/useOffboardLineFee.ts",
       "utf8",
     );
     const page = readFileSync(
       "src/container/Dashboard/Employees/OffboardDevices/index.tsx",
       "utf8",
     );
-    const review = readFileSync(
-      "src/container/Dashboard/Employees/OffboardDevices/offboardReview.ts",
-      "utf8",
-    );
 
-    assert.match(row, /useOffboardLineFee/);
-    assert.doesNotMatch(row, /feeForDevice/);
-    assert.doesNotMatch(review, /feeForDevice/);
-    assert.doesNotMatch(page, /useGetServiceFeesQuery/);
+    assert.match(row, /wipeOptionFeeLabels/);
+    assert.match(hook, /feeForDevice/);
+    assert.match(hook, /useGetServiceFeesQuery/);
     assert.match(page, /buildOffboardReview\(/);
   });
 });

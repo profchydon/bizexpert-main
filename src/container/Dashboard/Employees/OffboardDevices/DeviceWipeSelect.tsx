@@ -17,14 +17,19 @@ interface Props {
   value: WipeType;
   disposition: Disposition;
   onChange: (value: WipeType) => void;
+  optionLabels?: Partial<Record<WipeType, string>>;
 }
 
 const DeviceWipeSelect: React.FC<Props> = ({
   value,
   disposition,
   onChange,
+  optionLabels,
 }) => {
-  const options = getWipeOptions(disposition);
+  const options = getWipeOptions(disposition).map((option) => ({
+    ...option,
+    label: optionLabels?.[option.value] ?? option.label,
+  }));
 
   if (options.length <= 1) {
     return (

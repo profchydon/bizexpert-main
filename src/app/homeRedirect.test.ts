@@ -13,3 +13,10 @@ test("Rayda onboarding index sends BizExpert users to login", () => {
   assert.match(source, /isBizExpertApp\(\)/);
   assert.match(source, /redirect\(routes\.LOGIN\)/);
 });
+
+test("BizExpert create-business onboarding is a dedicated route", () => {
+  const source = readFileSync("src/app/onboarding/business/page.tsx", "utf8");
+  assert.match(source, /isBizExpertApp\(\)/);
+  assert.match(source, /BusinessOnboarding/);
+  assert.equal(source.includes("DashboardSectionPlaceholder"), false);
+});

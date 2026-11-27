@@ -1,10 +1,11 @@
-import { DashboardSectionPlaceholder } from "@/components/bizexpert/DashboardSectionPlaceholder";
+import { redirect } from "next/navigation";
+import { isBizExpertApp } from "@/config/product";
+import routes from "@/routes";
+import BusinessOnboarding from "@/container/BizExpert/Onboarding/BusinessOnboarding";
 
 export default function OnboardingBusinessPage() {
-  return (
-    <DashboardSectionPlaceholder
-      title="Create your business"
-      description="Business onboarding will be ported from the legacy web app next."
-    />
-  );
+  if (!isBizExpertApp()) {
+    redirect(routes.ONBOARDING);
+  }
+  return <BusinessOnboarding />;
 }

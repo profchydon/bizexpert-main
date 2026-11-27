@@ -13,6 +13,7 @@ import {
 } from "./offboardPricing";
 import { useOffboardLineFee } from "./useOffboardLineFee";
 import { useServiceFeeFormat } from "./useServiceFeeFormat";
+import { wipeOptionFeeLabels } from "./wipeOptionFeeLabels";
 
 export const OFFBOARD_COLUMN_TEMPLATE = "32px minmax(0,1.8fr) 360px 200px 90px";
 
@@ -42,11 +43,17 @@ const AssignedDeviceRow: React.FC<Props> = ({
   onFee,
 }) => {
   const formatFee = useServiceFeeFormat();
-  const { amount, isLoading } = useOffboardLineFee({
+  const { amount, table, assetType, isLoading } = useOffboardLineFee({
     employeeId,
     line,
     onFee,
   });
+  const wipeLabels = wipeOptionFeeLabels(
+    line.disposition,
+    table,
+    assetType,
+    formatFee,
+  );
 
   return (
     <div
@@ -99,6 +106,7 @@ const AssignedDeviceRow: React.FC<Props> = ({
       <DeviceWipeSelect
         value={line.wipeType}
         disposition={line.disposition}
+        optionLabels={wipeLabels}
         onChange={(value) => onWipe(line.id, value)}
       />
 

@@ -1,12 +1,8 @@
 import { useEffect, useMemo } from "react";
-import { useWorkspaceCompanyId } from "@/hooks/useWorkspaceCompanyId";
-import { useGetOffboardFeesQuery } from "@/api/baseQueries/feesApi/getOffboardFees";
-import { useAuthUserDetail } from "@/utils/useAuthUser";
+import { useGetServiceFeesQuery } from "@/api/baseQueries/feesApi/getServiceFees";
 import type { DeviceLine } from "@/types/offboard";
-import {
-  buildOffboardFeesRequest,
-  extractEmployeeServiceFee,
-} from "./offboardFeeBreakdown";
+import { buildServiceFeeTable, feeForDevice } from "./offboardPricing";
+import { useResolvedAssetType } from "./useResolvedAssetType";
 
 interface Args {
   employeeId: string;
@@ -14,31 +10,23 @@ interface Args {
   onFee?: (lineId: string, fee: number) => void;
 }
 
-export const useOffboardLineFee = ({ employeeId, line, onFee }: Args) => {
-  const { getCompanyDetails } = useAuthUserDetail();
-  const companyId = useWorkspaceCompanyId();
-  const countryId = getCompanyDetails()?.country?.id;
-
-  const payload = useMemo(
-    () =>
-      buildOffboardFeesRequest({
-        companyId,
-        countryId,
-        employeeId,
-        lines: [line],
-      }),
-    [companyId, countryId, employeeId, line],
-  );
-
-  const { data, isFetching } = useGetOffboardFeesQuery(payload as never, {
-    skip: !payload,
-  });
-  const amount = extractEmployeeServiceFee(data?.data, employeeId);
+export const useOffboardLineFee = ({ line, onFee }: Args) => {
+  const { data, isFetching } = useGetServiceFeesQuery();
+  const assetType = useResolvedAssetType(line.assetType);
+  const table = useMemo(() => buildServiceFeeTable(data?.data), [data?.data]);
+  const amount = table
+    ? feeForDevice(line.disposition, line.wipeType, table, assetType)
+    : null;
 
   useEffect(() => {
     if (amount == null || amount === line.fee) return;
     onFee?.(line.id, amount);
   }, [amount, line.fee, line.id, onFee]);
 
-  return { amount, isLoading: isFetching && amount == null };
+  return {
+    amount,
+    table,
+    assetType,
+    isLoading: isFetching && amount == null,
+  };
 };

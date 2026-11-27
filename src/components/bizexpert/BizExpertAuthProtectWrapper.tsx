@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import routes from "@/routes";
-import { isAuthenticated } from "@/lib/bizexpert/auth";
+import { getBusiness, isAuthenticated } from "@/lib/bizexpert/auth";
 import { useBizExpertAuth } from "@/store/bizexpert/auth-context";
 
 export function BizExpertAuthProtectWrapper({
@@ -23,6 +23,10 @@ export function BizExpertAuthProtectWrapper({
     if (!mounted || isLoading) return;
     if (!isAuthenticated()) {
       router.replace(routes.LOGIN);
+      return;
+    }
+    if (!getBusiness()) {
+      router.replace(routes.ONBOARDING_BUSINESS);
     }
   }, [mounted, isLoading, router]);
 
@@ -30,7 +34,7 @@ export function BizExpertAuthProtectWrapper({
     return null;
   }
 
-  if (!isAuthenticated()) {
+  if (!isAuthenticated() || !getBusiness()) {
     return null;
   }
 

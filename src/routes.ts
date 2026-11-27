@@ -7,6 +7,7 @@ const routes = {
   EMPLOYEE_INVITE: "/auth/employee-invite",
 
   ONBOARDING: "/onboarding",
+  ONBOARDING_BUSINESS: "/onboarding/business",
   LEGACY_ONBOARDING: "/legacy-onboarding",
 
   DASHBOARD: "/dashboard",

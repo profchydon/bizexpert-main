@@ -4,6 +4,7 @@ import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { useBizExpertBusiness } from "@/store/bizexpert/business-context";
+import routes from "@/routes";
 import { LocationsTable } from "./LocationsTable";
 import { CreateLocation } from "./CreateLocation";
 import { locationsPageSectionClass } from "./locationsPageClasses";
@@ -16,7 +17,10 @@ export default function Locations() {
     return (
       <p className="py-8 text-secondary">
         No business selected.{" "}
-        <a href="/onboarding/business" className="text-brand-600 underline">
+        <a
+          href={routes.ONBOARDING_BUSINESS}
+          className="text-brand-600 underline"
+        >
           Create one
         </a>
       </p>

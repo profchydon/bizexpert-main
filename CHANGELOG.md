@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Change (BizExpert):** Removed the Rayda `favicon.ico` from the app so the dashboard tab no longer shows Rayda branding. Covered by `favicon.test.ts`.
+
+- **Feat (BizExpert):** Account creation emails a 6-digit OTP via Resend before the business is created. Covered by `submitBusinessOnboarding.test.ts` and `businessOnboardingWiring.test.ts`.
+
+- **Feat (BizExpert):** `/onboarding/business` registers a new owner (or uses the signed-in user), creates the business, and continues to the dashboard. Covered by `businessOnboardingSchema.test.ts`, `submitBusinessOnboarding.test.ts`, and `businessOnboardingWiring.test.ts`.
+
+- **Fix:** Off-board Service fee column now uses the same catalog amount as the wipe/action dropdown for the selected disposition, wipe, and device type, instead of a mismatched offboarding quote. Covered by `wipeOptionFeeLabels.test.ts` and `offboardServiceFees.test.ts`.
+
 - **Fix (BizExpert):** Simple product create no longer requires a variant name. Empty draft variants are ignored unless “This product has variants” is checked. Variant payload mapping uses a trimmed name fallback so `next build` type-checks. Covered by `productCreateSchema.test.ts`.
 
 - **Fix (BizExpert):** Product create waits for the add-product dialog to close before opening the slideout, submits from the button (not a native form submit), surfaces Nest/network errors, and times out hung API calls. Covered by `overlayHandoff.test.ts`, `productsApiError.test.ts`, `productCreateSchema.test.ts`, and `productsWiring.test.ts`.

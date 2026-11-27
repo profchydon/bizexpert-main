@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useBizExpertAuth } from "@/store/bizexpert/auth-context";
+import routes from "@/routes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -93,7 +94,7 @@ export function BizExpertLoginForm() {
       <p className="mt-8 text-center text-sm text-gray-600">
         Don&apos;t have an account?{" "}
         <Link
-          href="/onboarding/business"
+          href={routes.ONBOARDING_BUSINESS}
           className="font-semibold text-brand-600 hover:underline"
         >
           Create a business

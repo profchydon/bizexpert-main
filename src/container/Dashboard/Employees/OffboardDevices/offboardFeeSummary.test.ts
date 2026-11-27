@@ -156,8 +156,8 @@ describe("offboard fee summary wiring", () => {
       "src/container/Dashboard/Employees/OffboardDevices/useOffboardLineFee.ts",
       "utf8",
     );
-    assert.match(lineFee, /extractEmployeeServiceFee/);
-    assert.match(lineFee, /buildOffboardFeesRequest/);
-    assert.doesNotMatch(lineFee, /feeForDevice/);
+    assert.match(lineFee, /feeForDevice/);
+    assert.match(lineFee, /useGetServiceFeesQuery/);
+    assert.doesNotMatch(lineFee, /extractEmployeeServiceFee/);
   });
 });

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { isAuthenticated } from "@/lib/bizexpert/auth";
+import { getBusiness, isAuthenticated } from "@/lib/bizexpert/auth";
 import { useBizExpertAuth } from "@/store/bizexpert/auth-context";
 import routes from "@/routes";
 import { BizExpertLoginForm } from "./BizExpertLoginForm";
@@ -21,7 +21,9 @@ export default function BizExpertLogin() {
   useEffect(() => {
     if (isLoading) return;
     if (isAuthenticated()) {
-      router.replace(routes.OVERVIEW);
+      router.replace(
+        getBusiness() ? routes.OVERVIEW : routes.ONBOARDING_BUSINESS,
+      );
     }
   }, [isLoading, router]);
 

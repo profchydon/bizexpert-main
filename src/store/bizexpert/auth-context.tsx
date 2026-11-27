@@ -26,6 +26,7 @@ interface AuthContextType {
   business: Business | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  persistSession: (user: User, token: string) => void;
   logout: () => void;
   setBusiness: (b: Business) => void;
   updateUser: (u: User) => void;
@@ -51,22 +52,26 @@ export function BizExpertAuthProvider({
     setIsLoading(false);
   }, []);
 
+  const persistSession = useCallback((u: User, token: string) => {
+    setToken(token);
+    setUser(u);
+    setUserState(u);
+  }, []);
+
   const login = useCallback(
     async (email: string, password: string) => {
       const res = await bizexpertApi.post("/auth/login", { email, password });
       const { user: u, token, businesses } = res.data;
-      setToken(token);
-      setUser(u);
-      setUserState(u);
+      persistSession(u, token);
       if (businesses?.[0]) {
         setBusiness(businesses[0]);
         setBusinessState(businesses[0]);
         router.push(routes.OVERVIEW);
       } else {
-        router.push("/onboarding/business");
+        router.push(routes.ONBOARDING_BUSINESS);
       }
     },
-    [router],
+    [persistSession, router],
   );
 
   const logout = useCallback(() => {
@@ -93,6 +98,7 @@ export function BizExpertAuthProvider({
         business,
         isLoading,
         login,
+        persistSession,
         logout,
         setBusiness: setBusinessCtx,
         updateUser,
